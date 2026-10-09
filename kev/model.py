@@ -1,5 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Jared Palmer
+# Derived from Kev (https://github.com/jaredpalmer/kev).
+# Modified by Nace.AI for Drex: Efficient-DLM loading, bidirectional state
+# attention, and configurable serving limits.
+# See NOTICE and docs/upstream.md for attribution and revision information.
 """Decision model: causal LM backbone + block-causal branch mask + pointer readout."""
-import copy, math, os, re
+import copy, json, math, os, re
 from pathlib import Path
 import torch
 import torch.nn as nn
@@ -70,39 +76,20 @@ def load_tokenizer(name, revision=None):
 
 
 def load_backbone(name, revision, dtype, attn):
-    """Load the encoder. Efficient-DLM is bidirectional unless the caller passes a mask.
+    """Load a local safetensors encoder without executing checkpoint Python code."""
+    config_data = json.loads((Path(name) / "config.json").read_text())
+    if config_data.get("model_type") == "edlm":
+        from .edlm import EfficientDLM, EfficientDLMConfig
 
-    The shards use Qwen3 block names. The config does not. Loading them as
-    Qwen3ForCausalLM would build a causal mask whenever the caller omits one.
-    """
-    root = Path(name)
-    if (root / "modeling_edlm.py").is_file():
-        import importlib.util
-        import sys
-
-        root_s = str(root.resolve())
-        if root_s not in sys.path:
-            sys.path.insert(0, root_s)
-
-        def load_mod(mod_name, filename):
-            spec = importlib.util.spec_from_file_location(mod_name, root / filename)
-            mod = importlib.util.module_from_spec(spec)
-            sys.modules[mod_name] = mod
-            spec.loader.exec_module(mod)
-            return mod
-
-        configuration = load_mod("configuration_edlm", "configuration_edlm.py")
-        modeling = load_mod("modeling_edlm", "modeling_edlm.py")
-        cfg = configuration.EfficientDLMConfig.from_pretrained(str(root), revision=revision)
-        return modeling.EfficientDLM.from_pretrained(
-            str(root), config=cfg, revision=revision, dtype=dtype, attn_implementation=attn
-        ).model
-    cfg = AutoConfig.from_pretrained(name, revision=revision, trust_remote_code=True)
-    if getattr(cfg, "model_type", None) == "edlm" or (getattr(cfg, "architectures", [""]) or [""])[0] == "EfficientDLM":
-        return AutoModelForCausalLM.from_pretrained(
-            name, revision=revision, dtype=dtype, attn_implementation=attn, trust_remote_code=True
-        ).model
-    return AutoModelForCausalLM.from_pretrained(name, revision=revision, dtype=dtype, attn_implementation=attn).model
+        cfg = EfficientDLMConfig.from_dict(config_data)
+        model_class = EfficientDLM
+    else:
+        cfg = AutoConfig.from_pretrained(name, revision=revision, trust_remote_code=False)
+        model_class = AutoModelForCausalLM
+    return model_class.from_pretrained(
+        name, config=cfg, revision=revision, dtype=dtype, attn_implementation=attn,
+        trust_remote_code=False, use_safetensors=True, weights_only=True,
+    ).model
 
 
 def pad_id(tok):

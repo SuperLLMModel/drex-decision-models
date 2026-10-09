@@ -1,8 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Jared Palmer
+# Adapted from Kev (https://github.com/jaredpalmer/kev).
+# Modified by Nace.AI for local merged Drex checkpoints and pointer heads.
+# See NOTICE and docs/upstream.md for attribution and revision information.
 """Load a merged Drex checkpoint.
 
 The backbone shards live next to ``head.pt``. There is no adapter to merge.
 """
 from pathlib import Path
+import pickle
 
 import torch
 
@@ -11,7 +17,13 @@ from .model import DecisionModel, load_tokenizer
 
 def read_meta(path):
     path = Path(path)
-    return torch.load(path / "head.pt", map_location="cpu", weights_only=False)
+    try:
+        meta = torch.load(path / "head.pt", map_location="cpu", weights_only=True)
+    except pickle.UnpicklingError as exc:
+        raise ValueError("head.pt must contain only tensors and primitive metadata; unsafe pickle objects are rejected") from exc
+    if not isinstance(meta, dict) or not isinstance(meta.get("head"), dict):
+        raise ValueError("head.pt must be a metadata dictionary containing a head state dictionary")
+    return meta
 
 
 def load(path, device=None, dtype=None):

@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Jared Palmer
+# Derived from Kev (https://github.com/jaredpalmer/kev).
+# Modified by Nace.AI for Drex: model default and ordered score legends.
+# See NOTICE and docs/upstream.md for attribution and revision information.
 """TypeSafe-compatible request/response shapes (POST /v1/systemone) mapped onto the single pointer primitive.
 
 Noul   -> 2 options [false, true];            answer = p(true)

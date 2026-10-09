@@ -1,0 +1,8 @@
+Drex decision models incorporates code from Kev:
+https://github.com/jaredpalmer/kev
+
+Copyright 2026 Jared Palmer
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The Kev runtime has been modified by Nace.AI for Drex. See
+docs/upstream.md for the affected files and available provenance.

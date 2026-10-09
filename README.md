@@ -48,6 +48,11 @@ curl http://127.0.0.1:8000/v1/systemone \
 
 `GET /health` returns `{"status": "ok", "model": "drex-v1.5"}` once the weights are loaded. Replace `drex-v1.5` with any model above.
 
+Checkpoint loading requires safetensors backbone weights and a `head.pt` containing
+only tensors and primitive metadata. Python files and custom-code mappings bundled
+with checkpoints are not executed; Drex DLM uses the implementation in this repository.
+Checkpoints that require other custom Python implementations are unsupported.
+
 ## llama.cpp
 
 Build the fork, convert the weights to GGUF and serve them. Add `-DGGML_CUDA=ON` to the first `cmake` command on NVIDIA, and `-ngl 99` to `llama-server` to use the GPU.
@@ -107,3 +112,6 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
 ## License
 
 Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page ([Drex v1.5](https://huggingface.co/nace-ai/drex-v1.5)).
+
+The Python runtime includes code adapted from [Kev](https://github.com/jaredpalmer/kev)
+by Jared Palmer. See [NOTICE](NOTICE) and [upstream provenance](docs/upstream.md).
