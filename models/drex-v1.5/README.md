@@ -1,6 +1,6 @@
 # Drex v1.5
 
-A decision model built on [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B): a `Qwen3_5ForCausalLM` backbone (32 layers, hybrid attention with 3 linear-attention layers for every full-attention layer, about 9B parameters, bf16) and a pointer head in `head.pt`. Each question is scored in one forward pass over the state plus that question; nothing is generated, so the sampling values in `generation_config.json` do not apply.
+A decision model built on [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B), itself a distilled Qwen 3.5 9B: a `Qwen3_5ForCausalLM` backbone (32 layers, hybrid attention with 3 linear-attention layers for every full-attention layer, about 9B parameters, bf16) and a pointer head in `head.pt`. Each question is scored in one forward pass over the state plus that question; nothing is generated, so the sampling values in `generation_config.json` do not apply.
 
 [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v1.5`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v1.5`)
 

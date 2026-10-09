@@ -12,7 +12,7 @@ Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and na
 
 | Model | Backbone | Weights | llama.cpp and Ollama branch | License |
 |---|---|---|---|---|
-| [Drex v1.5](models/drex-v1.5) | Qwen3.5-based, 9B | [nace-ai/drex-v1.5](https://huggingface.co/nace-ai/drex-v1.5) | `drex-v1.5` | [Nace.AI Open RAIL-M](models/drex-v1.5/LICENSE) |
+| [Drex v1.5](models/drex-v1.5) | [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (distilled Qwen 3.5 9B) | [nace-ai/drex-v1.5](https://huggingface.co/nace-ai/drex-v1.5) | `drex-v1.5` | [Nace.AI Open RAIL-M](models/drex-v1.5/LICENSE) |
 | [Drex DLM](models/drex-dlm) | Efficient-DLM-8B | [nace-ai/drex-dlm](https://huggingface.co/nace-ai/drex-dlm) | `edlm` (llama.cpp), `nace-edlm` (Ollama) | [CC BY-NC 4.0](models/drex-dlm/LICENSE.md) |
 
 ## Runners
