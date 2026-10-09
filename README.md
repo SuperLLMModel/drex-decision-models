@@ -1,8 +1,8 @@
 # Drex decision models
 
-**Drex v1.5 is out.** [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
+🚀 **Drex v1.5 is out!** Rank 1 on Decision Index 0.2.1 with a score of 58.28, and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
 
-**Drex DLM is out.** [Model page](models/drex-dlm) · [Weights](https://huggingface.co/nace-ai/drex-dlm)
+🎉 **Drex DLM is out!** A diffusion-language-model decision model with a Q8_0 GGUF for Apple silicon and CUDA. [Model page](models/drex-dlm) · [BF16](https://huggingface.co/nace-ai/drex-dlm) · [Q8_0](https://huggingface.co/nace-ai/drex-dlm-Q8_0)
 
 Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and named typed questions (yes/no, multiple choice or rating scale) and get a probability for every option back; nothing is generated. Every model serves the `POST /v1/systemone` API of the hosted [Drex API](https://drex.nace.ai/docs), so you can run it yourself.
 

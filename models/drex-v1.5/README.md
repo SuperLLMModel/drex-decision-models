@@ -74,9 +74,9 @@ On NVIDIA, add `-DGGML_CUDA=ON` when configuring the build. The server answers `
 
 Requests up to 16,384 tokens are accepted by default. For longer ones set `SYSTEMONE_CONTEXT` (see [Context length](../../docs/context-length.md)) and raise `-c`: each slot gets `-c / 2`, and the state plus one question must fit in it.
 
-Tested on an NVIDIA A10G (24 GB) with CUDA 13.2, against the Python server on two requests (87 and 5,104 tokens, six questions): probabilities differ by at most 0.0075 in bf16 and 0.034 in Q8_0, and every answer is the same.
+Tested on an AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2), against the Python server on two requests (87 and 5,104 tokens, six questions): probabilities differ by at most 0.0075 in bf16 and 0.034 in Q8_0, and every answer is the same.
 
-On an Apple M5 Pro (48 GB), the Q8_0 GGUF gives the same answers on Metal (probabilities within 0.019) and on the CPU (within 0.035).
+On an Apple M5 Pro (18-core CPU, 20-core GPU, 48 GB unified memory, macOS 26.5.2), the Q8_0 GGUF gives the same answers on Metal (probabilities within 0.019) and on the CPU (within 0.035).
 
 ## Ollama
 
@@ -119,7 +119,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the A10G and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 32,768).
+Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the g5.2xlarge and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 32,768).
 
 ## License
 
