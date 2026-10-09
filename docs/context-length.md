@@ -1,11 +1,35 @@
 # Context length
 
-The models support up to 131,072 tokens. Every runner defaults to 16,384, and the full window is opt-in.
+A request (the state plus one question) is limited to 16,384 tokens by default. To accept longer ones, raise the limit for your runner. Larger requests return an error.
 
-| Runner | Setting |
-|---|---|
-| Python | `KEV_CONTEXT=131072 python serve.py --model weights/<model> --port 8000` |
-| llama-server | `SYSTEMONE_CONTEXT=131072` and a matching `-c`, `-b` and `-ub` (the model page gives the values) |
-| Ollama | `PARAMETER num_ctx 131072` in the Modelfile, then `ollama create` again and start the daemon with `SYSTEMONE_CONTEXT=131072` |
+| Model | Default | Maximum |
+|---|---|---|
+| Drex v1.5 | 16,384 | 131,072 |
+| Drex DLM | 16,384 | 32,768 |
 
-`KEV_SERVE_MAX_STATE`, `KEV_SERVE_MAX_BRANCH` and `KEV_SERVE_MAX_PACKED` (Python) and the matching `SYSTEMONE_MAX_STATE`, `SYSTEMONE_MAX_BRANCH` and `SYSTEMONE_MAX_PACKED` (llama-server) override individual caps. None are needed to use the full window.
+Below, `N` is the limit you want: up to 131,072 for Drex v1.5 and up to 32,768 for Drex DLM. A value above the model's maximum is rejected.
+
+## Python
+
+```bash
+KEV_CONTEXT=N python serve.py --model weights/<model> --port 8000
+```
+
+## llama-server
+
+Set `SYSTEMONE_CONTEXT=N` and size `-c` for it. `-c` is shared by the slots, so each slot gets `-c` divided by `-np`.
+
+| Model | Default (16,384) | Longer requests |
+|---|---|---|
+| Drex v1.5 (`-np 2`) | `-c 32768 -b 16384 -ub 2048` | `SYSTEMONE_CONTEXT=N` with `-c` set to 2 x N, `-b 16384 -ub 2048` |
+| Drex DLM (`-np 1`) | `-c 16384 -b 16384 -ub 16384` | `SYSTEMONE_CONTEXT=N` with `-c N -b N -ub N` |
+
+For example, 131,072 tokens on Drex v1.5 is `SYSTEMONE_CONTEXT=131072` with `-c 262144`.
+
+## Ollama
+
+Set `PARAMETER num_ctx N` in the Modelfile, run `ollama create` again, and start the daemon with `SYSTEMONE_CONTEXT=N`. Ollama sizes the slots from `num_ctx`.
+
+## Individual limits
+
+`KEV_SERVE_MAX_STATE`, `KEV_SERVE_MAX_BRANCH` and `KEV_SERVE_MAX_PACKED` (Python) and `SYSTEMONE_MAX_STATE`, `SYSTEMONE_MAX_BRANCH` and `SYSTEMONE_MAX_PACKED` (llama-server) override one limit each. They are not needed for the steps above.

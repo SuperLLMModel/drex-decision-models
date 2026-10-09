@@ -102,7 +102,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
 ## Docs
 
 - [Request format](docs/request-format.md): fields, question types, responses and batches.
-- [Context length](docs/context-length.md): the 131,072-token window and its settings.
+- [Context length](docs/context-length.md): default 16,384 tokens, up to 131,072 for Drex v1.5 and 32,768 for Drex DLM.
 
 ## License
 

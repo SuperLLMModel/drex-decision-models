@@ -75,7 +75,7 @@ curl http://127.0.0.1:8097/v1/systemone \
 
 The [Q8_0 GGUF](https://huggingface.co/nace-ai/drex-dlm-Q8_0) is a smaller option (pointer-head matrices stay F16). Download it into `weights/drex-dlm` and use its path in the command above; its model card has the tested configuration.
 
-For the full 131,072-token window, start with `SYSTEMONE_CONTEXT=131072 -c 131072 -b 131072 -ub 131072` (see [Context length](../../docs/context-length.md)).
+The default is 16,384 tokens and the maximum is 32,768. For 32,768, set `SYSTEMONE_CONTEXT=32768` and add `-c 32768 -b 32768 -ub 32768` (see [Context length](../../docs/context-length.md)).
 
 ## Ollama
 
@@ -117,7 +117,7 @@ jq '. + {model: "drex-dlm"}' examples/request.json | curl http://127.0.0.1:11434
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. `GET /api/version` checks readiness. Set `PARAMETER num_ctx 131072` for the full window.
+Ollama needs `"model"` in the request, which the `jq` filter adds. `GET /api/version` checks readiness. The default is 16,384 tokens and the maximum is 32,768. For 32,768, set `PARAMETER num_ctx 32768` and start the daemon with `SYSTEMONE_CONTEXT=32768`.
 
 ## Validation
 

@@ -12,22 +12,23 @@ SPECIAL = ["<|fim_prefix|>", "<|fim_middle|>", "<|box_start|>", "<|box_end|>", "
 # training context: state tokens, tokens per question branch, and the whole packed record. Frozen suites are admitted with
 # this rule (kev.suite) and training applies it to records built on the fly, so train and eval see the same population.
 MAX_STATE, MAX_BRANCH, MAX_PACKED = 384, 1024, 2048
-# Position window of the weights. Serving recommends 16,384 and can be raised to this.
+# Position window of the weights. Serving recommends 16,384 and can be raised to this (32,768 for non-hybrid backbones such as DLM).
 CONTEXT_LENGTH = 131072
+NON_HYBRID_CONTEXT_LENGTH = 32768
 RECOMMENDED_CONTEXT = 16384
 
 
 def _serve_limit(name, default):
-    """A serving cap from the environment. Missing or invalid keeps `default`. Never above the position window."""
+    """A serving cap from the environment. Unset keeps `default`. An invalid or too large value is an error."""
     raw = os.environ.get(name)
     if raw is None or raw == "":
         return default
     try:
         value = int(raw)
     except ValueError:
-        return default
+        raise ValueError(f"{name}={raw!r} is not an integer") from None
     if value < 1 or value > CONTEXT_LENGTH:
-        return default
+        raise ValueError(f"{name}={value} must be between 1 and {CONTEXT_LENGTH}")
     return value
 
 

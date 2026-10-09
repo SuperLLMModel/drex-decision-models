@@ -16,8 +16,8 @@ from pathlib import Path
 import torch
 
 from kev.api import SystemOneRequest, output_tokens, to_answers, to_record
-from kev.checkpoint import load
-from kev.model import SERVE_MAX_BRANCH, SERVE_MAX_PACKED, SERVE_MAX_STATE
+from kev.checkpoint import load as _load
+from kev.model import NON_HYBRID_CONTEXT_LENGTH, SERVE_MAX_BRANCH, SERVE_MAX_PACKED, SERVE_MAX_STATE
 
 EXAMPLE = {
     "state": {
@@ -44,6 +44,13 @@ EXAMPLE = {
         },
     },
 }
+
+
+def load(path):
+    tok, model = _load(path)
+    if not model.hybrid and max(SERVE_MAX_STATE, SERVE_MAX_BRANCH, SERVE_MAX_PACKED) > NON_HYBRID_CONTEXT_LENGTH:
+        raise ValueError(f"this model supports at most {NON_HYBRID_CONTEXT_LENGTH} tokens; lower KEV_CONTEXT")
+    return tok, model
 
 
 def _encode(tok, model, request):

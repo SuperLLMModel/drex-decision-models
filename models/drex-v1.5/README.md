@@ -4,7 +4,7 @@ A decision model built on [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://hugging
 
 [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v1.5`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v1.5`)
 
-The bf16 weights are about 18 GB and the Q8_0 GGUF about 9.5 GB. The backbone config sets 262,144 positions; long-document accuracy is reported up to 128k tokens (see [Long-context benchmarks](#long-context-benchmarks)).
+The bf16 weights are about 18 GB and the Q8_0 GGUF about 9.5 GB. Requests up to 16,384 tokens are accepted by default and up to 131,072 at most ([Context length](../../docs/context-length.md)). Long-document accuracy is reported up to 128k tokens (see [Long-context benchmarks](#long-context-benchmarks)).
 
 ## Performance
 
@@ -72,7 +72,7 @@ llama.cpp/build/bin/llama-server -m weights/drex-v1.5/drex-v1.5.gguf \
 
 On NVIDIA, add `-DGGML_CUDA=ON` when configuring the build. The server answers `POST /v1/systemone` with the same request and response as the Python server. Use `-np 2` so the state is encoded once and shared by every question; `-c` is split across slots, so each gets half. On a GPU (CUDA or Metal), add `-ngl 99`; leave it off to run on the CPU.
 
-Requests up to 16,384 tokens are accepted by default. For longer ones set `SYSTEMONE_CONTEXT` (see [Context length](../../docs/context-length.md)) and raise `-c`: each slot gets `-c / 2`, and the state plus one question must fit in it.
+This command accepts requests up to 16,384 tokens: `-c` is shared by the two slots, so each gets 16,384. For up to 131,072 tokens, set `SYSTEMONE_CONTEXT=131072` and use `-c 262144` (see [Context length](../../docs/context-length.md)).
 
 Tested on an AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2), against the Python server on two requests (87 and 5,104 tokens, six questions): probabilities differ by at most 0.0075 in bf16 and 0.034 in Q8_0, and every answer is the same.
 
@@ -119,7 +119,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the g5.2xlarge and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 131,072).
+Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the g5.2xlarge and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. The default is 16,384 tokens. For up to 131,072, set `PARAMETER num_ctx 131072`, import again, and start the daemon with `SYSTEMONE_CONTEXT=131072`.
 
 ## License
 
