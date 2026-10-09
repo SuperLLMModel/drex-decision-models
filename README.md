@@ -102,8 +102,8 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
 ## Docs
 
 - [Request format](docs/request-format.md): fields, question types, responses and batches.
-- [Context length](docs/context-length.md): the 32,768-token window and its settings.
+- [Context length](docs/context-length.md): the 131,072-token window and its settings.
 
 ## License
 
-Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page.
+Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page ([Drex v1.5](https://huggingface.co/nace-ai/drex-v1.5)).

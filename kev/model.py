@@ -13,7 +13,7 @@ SPECIAL = ["<|fim_prefix|>", "<|fim_middle|>", "<|box_start|>", "<|box_end|>", "
 # this rule (kev.suite) and training applies it to records built on the fly, so train and eval see the same population.
 MAX_STATE, MAX_BRANCH, MAX_PACKED = 384, 1024, 2048
 # Position window of the weights. Serving recommends 16,384 and can be raised to this.
-CONTEXT_LENGTH = 32768
+CONTEXT_LENGTH = 131072
 RECOMMENDED_CONTEXT = 16384
 
 

@@ -119,7 +119,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the g5.2xlarge and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 32,768).
+Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the g5.2xlarge and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 131,072).
 
 ## License
 
