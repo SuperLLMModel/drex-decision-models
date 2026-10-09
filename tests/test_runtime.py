@@ -1,4 +1,4 @@
-"""Weight-free tests of the single-decision System One API."""
+"""Weight-free tests of the System One API, single and batched."""
 import http.client
 import json
 import sys
@@ -32,16 +32,25 @@ class Scorer:
     def probs(self, enc):
         return [torch.tensor([0.25, 0.75]) for _ in enc["record"]["questions"]]
 
+    def forward_batch(self, encs):
+        return [[torch.log(torch.tensor([0.25, 0.75])) for _ in enc["record"]["questions"]] for enc in encs]
+
 
 class RuntimeTests(unittest.TestCase):
     def test_ordered_legend(self):
         parsed = SystemOneRequest.model_validate(REQUEST)
         self.assertEqual(to_record(parsed)[1][0]["legend"], ["Low", "High"])
 
-    def test_reject_batch_wrapper(self):
-        for body in ({"requests": [REQUEST]}, {**REQUEST, "requests": [REQUEST]}):
+    def test_batch_scores_every_request(self):
+        results = inference.decide_batch(Tokenizer(), Scorer(), [REQUEST, REQUEST])
+        self.assertEqual(len(results), 2)
+        for result in results:
+            self.assertEqual(result["answers"]["level"]["probabilities"], {"0": 0.25, "1": 0.75})
+
+    def test_reject_nested_and_empty_batches(self):
+        for body in ({"requests": [REQUEST]}, [{"requests": [REQUEST]}], [], "x"):
             with self.assertRaises(ValueError):
-                inference.decide(Tokenizer(), Scorer(), body)
+                inference.decide_batch(Tokenizer(), Scorer(), [body] if isinstance(body, dict) else body)
 
     def test_incomplete_and_nonfinite_readouts(self):
         scorer = Scorer()
@@ -58,7 +67,8 @@ class RuntimeTests(unittest.TestCase):
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()
             try:
-                for body, expected in ((REQUEST, 200), ({"requests": [REQUEST]}, 400),
+                for body, expected in ((REQUEST, 200), ({"requests": [REQUEST, REQUEST]}, 200),
+                                       ({**REQUEST, "requests": [REQUEST]}, 400), ({"requests": []}, 400),
                                        ({**REQUEST, "state": float("nan")}, 400),
                                        ({"state": "x", "questions": {}}, 400)):
                     with self.subTest(body=body):

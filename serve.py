@@ -2,8 +2,9 @@
 
     python serve.py --model weights/drex-v1.5 --port 8000
 
-POST /v1/systemone accepts ``model``, ``state``, and named ``choice``, ``noul``,
-or ``score`` questions. GET /health reports readiness.
+POST /v1/systemone accepts one decision, or ``requests``: a list of decisions.
+Several decisions that fit share one forward. This process scores the pointer head
+of the checkpoint.
 """
 import argparse
 import json
@@ -11,7 +12,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from inference import decide, load
+from inference import decide, decide_batch, load
 
 
 def reject_nonfinite_json(value):
@@ -64,7 +65,18 @@ def make_handler(tok, model, model_name):
                 if "model" in request and not isinstance(request["model"], str):
                     raise ValueError("model must be a string")
                 with lock:
-                    result = decide(tok, model, request)
+                    if "requests" in request:
+                        if "state" in request or "questions" in request:
+                            raise ValueError("a batch cannot also contain state or questions")
+                        items = request["requests"]
+                        if not isinstance(items, list) or not items:
+                            raise ValueError("requests must be a non-empty list")
+                        if len(items) > 1024:
+                            raise ValueError("requests exceeds 1024 items")
+                        results = decide_batch(tok, model, items)
+                        payload = {"model": request.get("model") or model_name, "results": results}
+                    else:
+                        payload = {"model": request.get("model") or model_name, **decide(tok, model, request)}
             except ValueError as exc:
                 self._send(400, {"error": str(exc)})
                 return
@@ -72,7 +84,7 @@ def make_handler(tok, model, model_name):
                 self.log_error("System One scoring failed: %r", exc)
                 self._send(500, {"error": "internal scoring error"})
                 return
-            self._send(200, {"model": request.get("model") or model_name, **result})
+            self._send(200, payload)
 
     return Handler
 

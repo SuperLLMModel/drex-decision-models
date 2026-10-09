@@ -76,6 +76,8 @@ Requests up to 16,384 tokens are accepted by default. For longer ones set `SYSTE
 
 Tested on an NVIDIA A10G (24 GB) with CUDA 13.2, against the Python server on two requests (87 and 5,104 tokens, six questions): probabilities differ by at most 0.0075 in bf16 and 0.034 in Q8_0, and every answer is the same.
 
+On an Apple M5 Pro (48 GB), the Q8_0 GGUF gives the same answers on Metal (probabilities within 0.019) and on the CPU (within 0.035).
+
 ## Ollama
 
 Use the Nace fork of Ollama with a `llama-server` built from the `drex-v1.5` branch above. Convert the GGUF first, as in the llama.cpp steps. From the repository root:
@@ -117,7 +119,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 32,768).
+Ollama needs `"model"` in the request, which the `jq` filter adds. Tested through Ollama on the A10G and the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same. It starts `llama-server` with two slots, so the state is encoded once per request. For longer documents raise `num_ctx`, import again, and start the daemon with `SYSTEMONE_CONTEXT` set to the same value (maximum 32,768).
 
 ## License
 

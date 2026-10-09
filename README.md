@@ -1,5 +1,9 @@
 # Drex decision models
 
+**Drex v1.5 is out.** [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
+
+**Drex DLM is out.** [Model page](models/drex-dlm) · [Weights](https://huggingface.co/nace-ai/drex-dlm)
+
 Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and named typed questions (yes/no, multiple choice or rating scale) and get a probability for every option back; nothing is generated. Every model serves the `POST /v1/systemone` API of the hosted [Drex API](https://drex.nace.ai/docs), so you can run it yourself.
 
 [Hosted API docs](https://drex.nace.ai/docs) · [Agent skill](https://github.com/nace-ai/drex-agent-skill)
@@ -36,9 +40,9 @@ curl http://127.0.0.1:8000/v1/systemone \
 
 ## Docs
 
-- [Request format](docs/request-format.md): fields, question types and responses.
+- [Request format](docs/request-format.md): fields, question types, responses and batches.
 - [Context length](docs/context-length.md): the 32,768-token window and its settings.
 
 ## License
 
-Code: MIT, see [LICENSE](LICENSE). Model weights: see each model's page.
+Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page.

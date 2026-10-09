@@ -70,4 +70,14 @@ Response from a bf16 CUDA run of `examples/request.json` with Drex v1.5:
 
 `usage.input_tokens` is the encoded document plus questions. `usage.output_tokens` counts the serialized answers, not generated text. `latency_ms` is the scoring time.
 
+## Batches
+
+`serve.py` scores several decisions in one call. Send `requests`, a list of up to 1,024 decisions, in place of `state` and `questions`:
+
+```json
+{ "requests": [ { "state": "...", "questions": { "...": {} } }, { "state": "...", "questions": { "...": {} } } ] }
+```
+
+The response carries `results`, one entry per decision in the same order, each shaped like a single response. Decisions that fit the packed-token budget (`KEV_SERVE_MAX_PACKED`) share one forward pass. A request cannot hold both `requests` and `state` or `questions`, and `requests` cannot be nested.
+
 Requests follow the System One format used by Jev and by [Kev](https://github.com/jaredpalmer/kev), so SDKs and servers written for that format work unchanged.

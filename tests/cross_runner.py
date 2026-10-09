@@ -121,11 +121,11 @@ def main():
         print(f"{name}: HTTP {status}", flush=True)
         if status != 400:
             raise AssertionError(f"{name}: expected HTTP 400, got {status}: {str(body)[:400]}")
-    if args.runner != "python":
-        status, _ = post(args.url, {"requests": [example]})
-        report["rejections"]["unsupported batch"] = status
-        if status != 400:
-            raise AssertionError(f"unsupported batch: expected HTTP 400, got {status}")
+    if args.runner == "python":
+        status, body = post(args.url, {"requests": [example, example]})
+        report["cases"]["batch"] = {"status": status, "results": len(body.get("results", []))}
+        if status != 200 or len(body.get("results", [])) != 2:
+            raise AssertionError(f"batch: expected two results, got HTTP {status}: {str(body)[:400]}")
     if args.long:
         for position in (0, 2):
             name = f"long marker {position}"
