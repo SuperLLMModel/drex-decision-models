@@ -1,6 +1,6 @@
 # Drex decision models
 
-🚀 **Drex v1.5 is out!** 58.08 on the public Decision Index 0.3.1, level with Jev, and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
+🚀 **Drex v1.5 is out!** 58.08 on the public Decision Index 0.3.1, the #1 model under 10B parameters, and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
 
 🎉 **Drex DLM is out!** A diffusion-language-model decision model with a Q8_0 GGUF for Apple silicon and CUDA. [Model page](models/drex-dlm) · [BF16](https://huggingface.co/nace-ai/drex-dlm) · [Q8_0](https://huggingface.co/nace-ai/drex-dlm-Q8_0)
 
