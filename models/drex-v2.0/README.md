@@ -1,6 +1,6 @@
 # Drex v2.0
 
-A decision model that answers typed questions about a given context. Pass the context as `state` and one or more named questions ([request format](../../docs/request-format.md)), and get a probability for every option back; nothing is generated. It is built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B), a mixture of experts with 35B parameters and about 3B active per token, with a [Kev](https://github.com/jaredpalmer/kev) pointer head, and scores 61.25 on the public Decision Index 0.3.1.
+Nace's flagship decision model. Give Drex v2.0 a `state` and typed questions ([request format](../../docs/request-format.md)) and it returns a probability for every option in one forward pass. Nothing is generated. It scores **61.25** on the public Decision Index 0.3.1, ahead of Jev 1.13.0 (57.96) and 3.2 points above [Drex v1.5](../drex-v1.5), and it beats Jev head to head in the eight-game arena (60.9%). Under the hood is [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B), a mixture of experts with 35B parameters and about 3B active per token, plus a [Kev](https://github.com/jaredpalmer/kev) pointer head.
 
 [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Drex v1.5](../drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
 
