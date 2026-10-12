@@ -1,6 +1,6 @@
 # Drex decision models
 
-🧠 **Drex v2.0 is out!** A 35B mixture-of-experts decision model that scores 61.25 on the public Decision Index 0.3. [Model page](models/drex-v2.0) · [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Performance](models/drex-v2.0#performance)
+🧠 **Drex v2.0 is out!** A 35B mixture-of-experts decision model that scores 61.25 on the public Decision Index 0.3.1. [Model page](models/drex-v2.0) · [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Performance](models/drex-v2.0#performance)
 
 🚀 **Drex v1.5 is out!** The highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08), and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
 

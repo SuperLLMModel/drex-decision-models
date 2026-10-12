@@ -1,6 +1,6 @@
 # Drex v2.0
 
-A decision model built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It scores 61.25 on the public Decision Index 0.3.
+A decision model built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It scores 61.25 on the public Decision Index 0.3.1.
 
 [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Drex v1.5](../drex-v1.5)
 
@@ -15,7 +15,7 @@ The backbone is a mixture-of-experts `Qwen3_5MoeForConditionalGeneration` with 4
 
 ## Performance
 
-### Decision Index 0.3 (public only)
+### Decision Index 0.3.1 (public only)
 
 | Model | Public index | Raw | Knowledge & Reasoning | Language | Retrieval | Tools | Arts |
 |---|---|---|---|---|---|---|---|
