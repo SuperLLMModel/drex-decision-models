@@ -4,10 +4,11 @@ A request (the state plus one question) is limited to 16,384 tokens by default. 
 
 | Model | Default | Maximum |
 |---|---|---|
+| Drex v2.0 | 16,384 | 131,072 |
 | Drex v1.5 | 16,384 | 131,072 |
 | Drex DLM | 16,384 | 32,768 |
 
-Below, `N` is the limit you want: up to 131,072 for Drex v1.5 and up to 32,768 for Drex DLM. A value above the model's maximum is rejected.
+Below, `N` is the limit you want: up to 131,072 for Drex v2.0 and Drex v1.5, and up to 32,768 for Drex DLM. A value above the model's maximum is rejected.
 
 ## Python
 
@@ -16,6 +17,8 @@ KEV_CONTEXT=N python serve.py --model weights/<model> --port 8000
 ```
 
 ## llama-server
+
+These sections cover Drex v1.5 and Drex DLM.
 
 Set `SYSTEMONE_CONTEXT=N` and size `-c` for it. `-c` is shared by the slots, so each slot gets `-c` divided by `-np`.
 

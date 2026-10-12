@@ -10,7 +10,7 @@ The following files have been adapted by Nace.AI for Drex:
 | File | Drex adaptations |
 |---|---|
 | `kev/api.py` | Drex model default and ordered score legends. |
-| `kev/model.py` | Efficient-DLM loading, bidirectional state attention, and configurable serving limits. |
+| `kev/model.py` | Efficient-DLM and Qwen3.6-35B-A3B (language model only) loading, bidirectional state attention, and configurable serving limits. |
 | `kev/checkpoint.py` | Simplified loading of local merged Drex checkpoints and pointer heads. |
 
 ## Revision record

@@ -6,12 +6,12 @@ import unittest
 from pathlib import Path
 
 import torch
-from transformers import Qwen3Config, Qwen3ForCausalLM
+from transformers import Qwen3_5MoeConfig, Qwen3_5MoeForConditionalGeneration, Qwen3Config, Qwen3ForCausalLM
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from kev.checkpoint import read_meta
 from kev.edlm import EfficientDLM, EfficientDLMConfig
-from kev.model import load_backbone
+from kev.model import is_hybrid, load_backbone
 
 
 class CheckpointTests(unittest.TestCase):
@@ -64,6 +64,23 @@ class CheckpointTests(unittest.TestCase):
                 with torch.no_grad():
                     torch.testing.assert_close(loaded(input_ids=ids).last_hidden_state,
                                                original.model(input_ids=ids).last_hidden_state)
+
+    def test_moe_backbone_keeps_only_the_language_model(self):
+        text = dict(vocab_size=64, hidden_size=32, num_hidden_layers=4, num_attention_heads=2,
+                    num_key_value_heads=1, head_dim=16, moe_intermediate_size=16,
+                    shared_expert_intermediate_size=16, num_experts=4, num_experts_per_tok=2,
+                    linear_key_head_dim=8, linear_value_head_dim=8, linear_num_key_heads=2,
+                    linear_num_value_heads=4, layer_types=["linear_attention"] * 3 + ["full_attention"])
+        vision = dict(depth=1, hidden_size=16, intermediate_size=16, num_heads=2, out_hidden_size=32)
+        full = Qwen3_5MoeForConditionalGeneration(Qwen3_5MoeConfig(text_config=text, vision_config=vision)).eval()
+        with tempfile.TemporaryDirectory() as directory:
+            full.save_pretrained(directory)
+            backbone = load_backbone(directory, None, torch.float32, "eager").eval()
+        self.assertTrue(is_hybrid(backbone.config))
+        self.assertFalse(hasattr(backbone, "visual"))
+        ids = torch.arange(10)[None]
+        torch.testing.assert_close(backbone(input_ids=ids).last_hidden_state,
+                                   full.model.language_model(input_ids=ids).last_hidden_state)
 
     def test_unknown_custom_architecture_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

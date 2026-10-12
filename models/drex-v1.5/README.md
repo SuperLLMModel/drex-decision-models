@@ -1,6 +1,6 @@
 # Drex v1.5
 
-A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It ranks first on Decision Index 0.2.1 with a score of 58.28.
+A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It is the highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08).
 
 [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v1.5`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v1.5`)
 
@@ -15,19 +15,17 @@ The backbone is a `Qwen3_5ForCausalLM` with 32 layers, about 9B parameters and h
 
 ## Performance
 
-### Decision Index 0.2.1
+### Decision Index 0.3.1 (public only)
 
-Official kit, full suite.
+| Model | Public index | Raw | Knowledge & Reasoning | Language | Retrieval | Tools | Arts |
+|---|---|---|---|---|---|---|---|
+| **Drex v1.5** (9B) | **58.08** | 68.08 | 44.6 | 60.4 | 61.7 | 75.0 | 48.8 |
+| Jev 1.13.0 | 57.96 | 68.55 | 53.9 | 59.2 | 55.4 | 75.1 | 39.1 |
+| Bespoke Nimble 9B v3 | 57.19 | 68.38 | 41.0 | 60.7 | 55.5 | 84.2 | 44.0 |
+| Cloudflare clef-flash | 56.15 | 66.53 | 53.0 | 47.2 | 52.2 | 81.9 | 48.4 |
+| ezjev 4B s2 | 50.82 | 63.16 | 31.0 | 60.5 | 56.3 | 69.9 | 31.1 |
 
-| Rank | Model | Index | Raw | Knowledge & Reasoning | Language | Retrieval | Tools | Arts |
-|---|---|---|---|---|---|---|---|---|
-| **1** | **Drex v1.5** | **58.28** | 67.80 | 44.2 | 62.5 | 62.0 | 75.3 | 45.1 |
-| 2 | Jev 1.13.0 | 57.91 | 68.09 | 51.4 | 62.0 | 55.4 | 75.1 | 37.7 |
-| 3 | Surogate Rune 26B-A4B v3 | 57.44 | 67.30 | 43.4 | 63.1 | 63.5 | 71.2 | 41.9 |
-| 4 | Decider chat · Gemma-4-31B | 57.33 | 67.22 | 44.3 | 60.4 | 63.1 | 75.6 | 38.3 |
-| 5 | AutoJev-27B | 56.40 | 66.89 | 40.9 | 63.5 | 54.9 | 79.3 | 39.4 |
-
-Area columns are chance-corrected skill × 100. Drex v1.5 is ahead of Jev on 21 of the 38 index benchmarks.
+Public index only: the 37 public benchmarks in five areas, without the private tests. Area columns are chance-corrected skill × 100. The table shows Drex v1.5, Jev and the top three other models under 10B parameters on the [leaderboard](https://huggingface.co/spaces/multimodalart/jev-decision-index). The Drex v1.5 numbers are from our own run of the official kit on the full public suite (the text suite is the same in 0.3 and 0.3.1); the other rows are the leaderboard's. Drex v1.5 is the highest-scoring model under 10B parameters; Jev's parameter count is not published. Drex v1.5, Jev and Nimble are within the board's 0.9-point tie band. Drex v1.5 is ahead of Jev on 20 of the 37 benchmarks.
 
 <details>
 <summary>JevBench (231 public items)</summary>
@@ -95,9 +93,9 @@ The server answers `POST /v1/systemone` with the same request and response as th
 <details>
 <summary>Tested hardware</summary>
 
-AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2), against the Python server on two requests (87 and 5,104 tokens, six questions): probabilities differ by at most 0.0075 in bf16 and 0.034 in Q8_0, and every answer is the same.
+AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2), against the Python server, every answer is the same in bf16 and Q8_0.
 
-Apple M5 Pro (18-core CPU, 20-core GPU, 48 GB unified memory, macOS 26.5.2): the Q8_0 GGUF gives the same answers on Metal (probabilities within 0.019) and on the CPU (within 0.035).
+Apple M5 Pro (18-core CPU, 20-core GPU, 48 GB unified memory, macOS 26.5.2): the Q8_0 GGUF gives the same answers on Metal and on the CPU.
 
 </details>
 
@@ -154,7 +152,7 @@ Ollama needs `"model"` in the request, which the `jq` filter adds. It starts `ll
 <details>
 <summary>Tested hardware</summary>
 
-Through Ollama on the g5.2xlarge above, with the same two requests: probabilities differ from the Python server by at most 0.0075 in bf16, and every answer is the same.
+Through Ollama on the g5.2xlarge above, every answer is the same as the Python server's.
 
 </details>
 

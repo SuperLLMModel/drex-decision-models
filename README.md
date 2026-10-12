@@ -1,6 +1,8 @@
 # Drex decision models
 
-🚀 **Drex v1.5 is out!** Rank 1 on Decision Index 0.2.1 with a score of 58.28, and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
+🧠 **Drex v2.0 is out!** A 35B mixture-of-experts decision model that scores 61.25 on the public Decision Index 0.3. [Model page](models/drex-v2.0) · [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Performance](models/drex-v2.0#performance)
+
+🚀 **Drex v1.5 is out!** The highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08), and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
 
 🎉 **Drex DLM is out!** A diffusion-language-model decision model with a Q8_0 GGUF for Apple silicon and CUDA. [Model page](models/drex-dlm) · [BF16](https://huggingface.co/nace-ai/drex-dlm) · [Q8_0](https://huggingface.co/nace-ai/drex-dlm-Q8_0)
 
@@ -12,12 +14,13 @@ Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and na
 
 | Model | Backbone | Weights | llama.cpp and Ollama branch | License |
 |---|---|---|---|---|
+| [Drex v2.0](models/drex-v2.0) | [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) (35B mixture of experts, about 3B active) | [nace-ai/drex-v2.0](https://huggingface.co/nace-ai/drex-v2.0) | – | [Nace.AI Open RAIL-M](models/drex-v2.0/LICENSE) |
 | [Drex v1.5](models/drex-v1.5) | [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (distilled Qwen 3.5 9B) | [nace-ai/drex-v1.5](https://huggingface.co/nace-ai/drex-v1.5) | `drex-v1.5` | [Nace.AI Open RAIL-M](models/drex-v1.5/LICENSE) |
 | [Drex DLM](models/drex-dlm) | Efficient-DLM-8B | [nace-ai/drex-dlm](https://huggingface.co/nace-ai/drex-dlm) | `edlm` (llama.cpp), `nace-edlm` (Ollama) | [CC BY-NC 4.0](models/drex-dlm/LICENSE.md) |
 
 ## Runners
 
-Every model runs in three ways and answers the same `POST /v1/systemone` request.
+Every model runs with Python and answers the same `POST /v1/systemone` request. Drex v1.5 and Drex DLM also run on llama.cpp and Ollama.
 
 | Runner | Hardware | Use it for |
 |---|---|---|
@@ -46,7 +49,7 @@ curl http://127.0.0.1:8000/v1/systemone \
   -H 'Content-Type: application/json' -d @examples/request.json
 ```
 
-`GET /health` returns `{"status": "ok", "model": "drex-v1.5"}` once the weights are loaded. Replace `drex-v1.5` with any model above.
+`GET /health` returns `{"status": "ok", "model": "drex-v1.5"}` once the weights are loaded. Replace `drex-v1.5` with any model above, for example `drex-v2.0`.
 
 Checkpoint loading requires safetensors backbone weights and a `head.pt` containing
 only tensors and primitive metadata. Python files and custom-code mappings bundled
@@ -107,11 +110,11 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
 ## Docs
 
 - [Request format](docs/request-format.md): fields, question types, responses and batches.
-- [Context length](docs/context-length.md): default 16,384 tokens, up to 131,072 for Drex v1.5 and 32,768 for Drex DLM.
+- [Context length](docs/context-length.md): default 16,384 tokens, up to 131,072 for Drex v1.5 and Drex v2.0, 32,768 for Drex DLM.
 
 ## License
 
-Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page ([Drex v1.5](https://huggingface.co/nace-ai/drex-v1.5)).
+Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page ([Drex v2.0](https://huggingface.co/nace-ai/drex-v2.0), [Drex v1.5](https://huggingface.co/nace-ai/drex-v1.5)).
 
 The Python runtime includes code adapted from [Kev](https://github.com/jaredpalmer/kev)
 by Jared Palmer. See [NOTICE](NOTICE) and [upstream provenance](docs/upstream.md).

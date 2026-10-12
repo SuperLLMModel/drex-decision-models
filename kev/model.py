@@ -86,6 +86,19 @@ def load_backbone(name, revision, dtype, attn):
     else:
         cfg = AutoConfig.from_pretrained(name, revision=revision, trust_remote_code=False)
         model_class = AutoModelForCausalLM
+        if getattr(cfg, "model_type", None) == "qwen3_5_moe":
+            # Qwen3.6-35B-A3B is a vision-language checkpoint: the language model sits at model.language_model and the
+            # vision tower is not used for decisions, so it is dropped before the weights move to the device.
+            from transformers import Qwen3_5MoeForConditionalGeneration
+
+            full = Qwen3_5MoeForConditionalGeneration.from_pretrained(
+                name, config=cfg, revision=revision, dtype=dtype, attn_implementation=attn,
+                trust_remote_code=False, use_safetensors=True, weights_only=True,
+            )
+            language_model = full.model.language_model
+            full.model.language_model = None
+            del full
+            return language_model
     return model_class.from_pretrained(
         name, config=cfg, revision=revision, dtype=dtype, attn_implementation=attn,
         trust_remote_code=False, use_safetensors=True, weights_only=True,
