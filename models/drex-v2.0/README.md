@@ -1,6 +1,8 @@
 # Drex v2.0
 
-Nace's flagship decision model. Give Drex v2.0 a `state` and typed questions ([request format](../../docs/request-format.md)) and it returns a probability for every option in one forward pass. Nothing is generated. It scores **61.25** on the public Decision Index 0.3.1, ahead of Jev 1.13.0 (57.96) and 3.2 points above [Drex v1.5](../drex-v1.5), and it beats Jev head to head in the eight-game arena (60.9%). Under the hood is [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B), a mixture of experts with 35B parameters and about 3B active per token, plus a [Kev](https://github.com/jaredpalmer/kev) pointer head.
+**Nace's flagship decision model: 61.25 on the public Decision Index 0.3.1, 3.3 points ahead of Jev 1.13.0 and 3.2 ahead of Drex v1.5.**
+
+We introduce Drex v2.0 from [Nace.AI](https://www.nace.ai/), a decision model that answers typed questions about a given context. Pass the context as `state` ([request format](../../docs/request-format.md)) with one or more named questions, and get a probability for every option back in one forward pass. Nothing is generated. Drex v2.0 beats Jev head to head in the eight-game arena (60.9%) and on email classification (AUC 0.984 against 0.981), and it runs on your own hardware with Python, llama.cpp or Ollama. It is built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B), a mixture of experts with 35B parameters and about 3B active per token, with a [Kev](https://github.com/jaredpalmer/kev) pointer head, and is released under the Nace.AI Open RAIL-M license.
 
 [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Drex v1.5](../drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
 
