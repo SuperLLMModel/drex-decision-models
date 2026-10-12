@@ -18,16 +18,16 @@ KEV_CONTEXT=N python serve.py --model weights/<model> --port 8000
 
 ## llama-server
 
-This section and the Ollama section cover Drex v1.5 and Drex DLM.
+This section and the Ollama section cover Drex v2.0, Drex v1.5 and Drex DLM.
 
 Set `SYSTEMONE_CONTEXT=N` and size `-c` for it. `-c` is shared by the slots, so each slot gets `-c` divided by `-np`.
 
 | Model | Default (16,384) | Longer requests |
 |---|---|---|
-| Drex v1.5 (`-np 2`) | `-c 32768 -b 16384 -ub 2048` | `SYSTEMONE_CONTEXT=N` with `-c` set to 2 x N, `-b 16384 -ub 2048` |
+| Drex v2.0 and Drex v1.5 (`-np 2`) | `-c 32768 -b 16384 -ub 2048` | `SYSTEMONE_CONTEXT=N` with `-c` set to 2 x N, `-b 16384 -ub 2048` |
 | Drex DLM (`-np 1`) | `-c 16384 -b 16384 -ub 16384` | `SYSTEMONE_CONTEXT=N` with `-c N -b N -ub N` |
 
-For example, 131,072 tokens on Drex v1.5 is `SYSTEMONE_CONTEXT=131072` with `-c 262144`.
+For example, 131,072 tokens on Drex v2.0 or Drex v1.5 is `SYSTEMONE_CONTEXT=131072` with `-c 262144`.
 
 ## Ollama
 

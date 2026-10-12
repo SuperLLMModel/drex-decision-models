@@ -1,6 +1,6 @@
 # Drex decision models
 
-🧠 **Drex v2.0 is out!** A 35B mixture-of-experts decision model that scores 61.25 on the public Decision Index 0.3.1. [Model page](models/drex-v2.0) · [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Performance](models/drex-v2.0#performance)
+🧠 **Drex v2.0 is out!** A 35B mixture-of-experts decision model that scores 61.25 on the public Decision Index 0.3.1, and it runs on llama.cpp and Ollama too. [Model page](models/drex-v2.0) · [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Performance](models/drex-v2.0#performance)
 
 🚀 **Drex v1.5 is out!** The highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08), and it runs on llama.cpp and Ollama too. [Model page](models/drex-v1.5) · [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [Performance](models/drex-v1.5#performance)
 
@@ -20,13 +20,13 @@ Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and na
 
 ## Runners
 
-Every model runs with Python and answers the same `POST /v1/systemone` request. Drex v1.5 and Drex DLM also run on llama.cpp and Ollama.
+Every model runs with Python and answers the same `POST /v1/systemone` request. Drex v2.0, Drex v1.5 and Drex DLM also run on llama.cpp and Ollama.
 
 | Runner | Hardware | Use it for |
 |---|---|---|
 | Python (`serve.py`) | NVIDIA GPU; Apple silicon for Drex DLM | The reference implementation, batched requests |
-| [llama.cpp](https://github.com/nace-ai/llama.cpp) fork | CUDA, Metal; CPU for Drex v1.5 | A GGUF served by `llama-server`, including Q8_0 |
-| [Ollama](https://github.com/nace-ai/ollama) fork | CUDA, Metal, CPU | `ollama create` and a local daemon |
+| [llama.cpp](https://github.com/nace-ai/llama.cpp) fork | CUDA, Metal; CPU for Drex v1.5; Metal and CPU for Drex v2.0 | A GGUF served by `llama-server`, including Q8_0 |
+| [Ollama](https://github.com/nace-ai/ollama) fork | CUDA, Metal, CPU; Metal and CPU for Drex v2.0 | `ollama create` and a local daemon |
 
 The commands below use Drex v1.5. Each model page has the exact steps, build presets and tested hardware.
 
@@ -58,10 +58,10 @@ Checkpoints that require other custom Python implementations are unsupported.
 
 ## llama.cpp
 
-Drex v1.5 and Drex DLM run on the llama.cpp fork. Build it, convert the weights to GGUF and serve them. Add `-DGGML_CUDA=ON` to the first `cmake` command on NVIDIA, and `-ngl 99` to `llama-server` to use the GPU.
+Drex v2.0, Drex v1.5 and Drex DLM run on the llama.cpp fork. Build it, convert the weights to GGUF and serve them. Add `-DGGML_CUDA=ON` to the first `cmake` command on NVIDIA, and `-ngl 99` to `llama-server` to use the GPU.
 
 ```bash
-git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/llama.cpp.git
+git clone --branch drex-v2.0 --single-branch https://github.com/nace-ai/llama.cpp.git
 cmake -S llama.cpp -B llama.cpp/build
 cmake --build llama.cpp/build -j --target llama-server llama-quantize
 
@@ -75,10 +75,10 @@ The server takes the same request as `serve.py`. `llama-quantize` makes a Q8_0 G
 
 ## Ollama
 
-The Nace fork of Ollama runs Drex v1.5 and Drex DLM as a `decision` capability and starts `llama-server` itself. Build the fork against the llama.cpp checkout above. These are the macOS commands; the [model page](models/drex-v1.5/README.md#ollama) has the CPU and CUDA presets.
+The Nace fork of Ollama runs Drex v2.0, Drex v1.5 and Drex DLM as a `decision` capability and starts `llama-server` itself. Build the fork against the llama.cpp checkout above. These are the macOS commands; the [model page](models/drex-v1.5/README.md#ollama) has the CPU and CUDA presets.
 
 ```bash
-git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/ollama.git
+git clone --branch drex-v2.0 --single-branch https://github.com/nace-ai/ollama.git
 cd ollama
 export OLLAMA_LLAMA_CPP_SOURCE="$PWD/../llama.cpp"
 cmake -S llama/server --preset darwin

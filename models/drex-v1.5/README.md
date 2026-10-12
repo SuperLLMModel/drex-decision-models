@@ -2,7 +2,7 @@
 
 A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It is the highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08).
 
-[Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v1.5`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v1.5`)
+[Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
 
 It runs with Python, llama.cpp or Ollama. The default limit is 16,384 tokens per request and it can be raised to 131,072 ([Context length](../../docs/context-length.md)). The bf16 weights take about 18 GB and the Q8_0 GGUF about 9.5 GB.
 
@@ -75,7 +75,7 @@ To accept requests longer than 16,384 tokens, set `KEV_CONTEXT` (up to 131,072);
 Runs on CUDA, Metal and CPU. Run these from the repository root:
 
 ```bash
-git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/llama.cpp.git
+git clone --branch drex-v2.0 --single-branch https://github.com/nace-ai/llama.cpp.git
 cmake -S llama.cpp -B llama.cpp/build
 cmake --build llama.cpp/build -j --target llama-server llama-quantize
 
@@ -103,7 +103,7 @@ Apple M5 Pro (18-core CPU, 20-core GPU, 48 GB unified memory, macOS 26.5.2): the
 
 ## Ollama
 
-Use the Nace fork of Ollama with a `llama-server` built from the `drex-v1.5` branch above. Convert the GGUF first, as in the llama.cpp steps.
+Use the Nace fork of Ollama with a `llama-server` built from the `drex-v2.0` branch above. Convert the GGUF first, as in the llama.cpp steps.
 
 <details>
 <summary>Build the fork</summary>
@@ -111,7 +111,7 @@ Use the Nace fork of Ollama with a `llama-server` built from the `drex-v1.5` bra
 From the repository root:
 
 ```bash
-git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/ollama.git
+git clone --branch drex-v2.0 --single-branch https://github.com/nace-ai/ollama.git
 cd ollama
 export OLLAMA_LLAMA_CPP_SOURCE="$PWD/../llama.cpp"
 cmake -S llama/server --preset darwin
