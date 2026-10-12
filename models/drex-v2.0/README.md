@@ -99,7 +99,7 @@ Eight OpenSpiel games, 32 matches each (16 openings × both colours). Score = (w
 
 ## Python
 
-The server answers `POST /v1/systemone`.
+Needs a CUDA GPU; memory use grows with document length. The server answers `POST /v1/systemone`.
 
 ```bash
 hf download nace-ai/drex-v2.0 --local-dir weights/drex-v2.0
