@@ -1,6 +1,6 @@
 # Drex v1.5
 
-A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It is the highest-scoring model under 10B parameters on the public Decision Index 0.3.1 (58.08).
+A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) with a [Kev](https://github.com/jaredpalmer/kev) pointer head. It takes a `state` and named typed questions ([request format](../../docs/request-format.md)) and returns a probability for every option; nothing is generated. It scores 58.08 on the public Decision Index 0.3.1, the **#1 model under 10B parameters** on the leaderboard.
 
 [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
 
@@ -25,7 +25,7 @@ The backbone is a `Qwen3_5ForCausalLM` with 32 layers, about 9B parameters and h
 | Cloudflare clef-flash | 56.15 | 66.53 | 53.0 | 47.2 | 52.2 | 81.9 | 48.4 |
 | ezjev 4B s2 | 50.82 | 63.16 | 31.0 | 60.5 | 56.3 | 69.9 | 31.1 |
 
-Public index only: the 37 public benchmarks in five areas, without the private tests. Area columns are chance-corrected skill × 100. The table shows Drex v1.5, Jev and the top three other models under 10B parameters on the [leaderboard](https://huggingface.co/spaces/multimodalart/jev-decision-index). The Drex v1.5 numbers are from our own run of the official kit on the full public suite (the text suite is the same in 0.3 and 0.3.1); the other rows are the leaderboard's. Jev's parameter count is not published. Drex v1.5, Jev and Nimble are within the board's 0.9-point tie band. Drex v1.5 is ahead of Jev on 20 of the 37 benchmarks.
+Public index only: the 37 public benchmarks in five areas, without the private tests. Area columns are chance-corrected skill × 100. The table shows Drex v1.5, Jev and the top three other models under 10B parameters on the [leaderboard](https://huggingface.co/spaces/multimodalart/jev-decision-index). The Drex v1.5 numbers are from our own run of the official kit on the full public suite (the text suite is the same in 0.3 and 0.3.1); the other rows are the leaderboard's. Drex v1.5 is the highest-scoring model under 10B parameters; Jev's parameter count is not published. Drex v1.5, Jev and Nimble are within the board's 0.9-point tie band. Drex v1.5 is ahead of Jev on 20 of the 37 benchmarks.
 
 <details>
 <summary>JevBench (231 public items)</summary>
