@@ -18,7 +18,7 @@ KEV_CONTEXT=N python serve.py --model weights/<model> --port 8000
 
 ## llama-server
 
-These sections cover Drex v1.5 and Drex DLM.
+This section and the Ollama section cover Drex v1.5 and Drex DLM.
 
 Set `SYSTEMONE_CONTEXT=N` and size `-c` for it. `-c` is shared by the slots, so each slot gets `-c` divided by `-np`.
 

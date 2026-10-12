@@ -4,7 +4,7 @@ A decision model built on NVIDIA's [Efficient-DLM-8B](https://huggingface.co/nvi
 
 [BF16 weights](https://huggingface.co/nace-ai/drex-dlm) · [Q8_0 GGUF](https://huggingface.co/nace-ai/drex-dlm-Q8_0) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `edlm`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `nace-edlm`)
 
-Tested on Apple M5 Max (128 GiB), Apple M5 Pro (48 GiB) and NVIDIA H100 80 GB SXM (CUDA). CPU-only inference has not been tested. Python 3.12 is the validated interpreter. The BF16 weights take about 16 GB; memory use grows with context length and batch size.
+Tested on Apple M5 Max (128 GiB), Apple M5 Pro (48 GiB) and NVIDIA H100 80 GB SXM (CUDA). Python 3.12 is the validated interpreter. The BF16 weights take about 16 GB; memory use grows with context length and batch size.
 
 ## How it works
 
@@ -36,7 +36,9 @@ hf download nace-ai/drex-dlm --local-dir weights/drex-dlm
 python serve.py --model weights/drex-dlm --port 8000
 ```
 
-## llama-server
+To accept requests longer than 16,384 tokens, set `KEV_CONTEXT` (up to 32,768); see [Context length](../../docs/context-length.md).
+
+## llama.cpp
 
 The `edlm` architecture, GGUF converter and `/v1/systemone` endpoint live on branch `edlm` of [nace-ai/llama.cpp](https://github.com/nace-ai/llama.cpp). You need CMake and a C/C++ toolchain (Xcode Metal toolchain on Apple Silicon). Run these from the repository root:
 
@@ -79,7 +81,7 @@ The default is 16,384 tokens and the maximum is 32,768. For 32,768, set `SYSTEMO
 
 ## Ollama
 
-[nace-ai/ollama](https://github.com/nace-ai/ollama), branch `nace-edlm`, launches a custom `llama-server` and forwards `POST /v1/systemone`. Finish the llama-server build and conversion above first. Build the runner and daemon from the repository root (Go 1.26; the toolchain downloads automatically):
+[nace-ai/ollama](https://github.com/nace-ai/ollama), branch `nace-edlm`, launches the `llama-server` built from the llama.cpp checkout above and forwards `POST /v1/systemone`. Finish the llama.cpp build and conversion above first, then build the runner and daemon from the repository root (Go 1.26; the toolchain downloads automatically):
 
 ```bash
 git clone --branch nace-edlm --single-branch https://github.com/nace-ai/ollama.git

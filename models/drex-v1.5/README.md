@@ -4,7 +4,7 @@ A decision model built on [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/Xia
 
 [Weights](https://huggingface.co/nace-ai/drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v1.5`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v1.5`)
 
-It runs with Python, llama.cpp or Ollama. Requests of up to 16,384 tokens are accepted by default and up to 131,072 at most ([Context length](../../docs/context-length.md)). The bf16 weights take about 18 GB and the Q8_0 GGUF about 9.5 GB.
+It runs with Python, llama.cpp or Ollama. The default limit is 16,384 tokens per request and it can be raised to 131,072 ([Context length](../../docs/context-length.md)). The bf16 weights take about 18 GB and the Q8_0 GGUF about 9.5 GB.
 
 <details>
 <summary>How it works</summary>
@@ -25,7 +25,7 @@ The backbone is a `Qwen3_5ForCausalLM` with 32 layers, about 9B parameters and h
 | Cloudflare clef-flash | 56.15 | 66.53 | 53.0 | 47.2 | 52.2 | 81.9 | 48.4 |
 | ezjev 4B s2 | 50.82 | 63.16 | 31.0 | 60.5 | 56.3 | 69.9 | 31.1 |
 
-Public index only: the 37 public benchmarks in five areas, without the private tests. Area columns are chance-corrected skill × 100. The table shows Drex v1.5, Jev and the top three other models under 10B parameters on the [leaderboard](https://huggingface.co/spaces/multimodalart/jev-decision-index). The Drex v1.5 numbers are from our own run of the official kit on the full public suite (the text suite is the same in 0.3 and 0.3.1); the other rows are the leaderboard's. Drex v1.5 is the highest-scoring model under 10B parameters; Jev's parameter count is not published. Drex v1.5, Jev and Nimble are within the board's 0.9-point tie band. Drex v1.5 is ahead of Jev on 20 of the 37 benchmarks.
+Public index only: the 37 public benchmarks in five areas, without the private tests. Area columns are chance-corrected skill × 100. The table shows Drex v1.5, Jev and the top three other models under 10B parameters on the [leaderboard](https://huggingface.co/spaces/multimodalart/jev-decision-index). The Drex v1.5 numbers are from our own run of the official kit on the full public suite (the text suite is the same in 0.3 and 0.3.1); the other rows are the leaderboard's. Jev's parameter count is not published. Drex v1.5, Jev and Nimble are within the board's 0.9-point tie band. Drex v1.5 is ahead of Jev on 20 of the 37 benchmarks.
 
 <details>
 <summary>JevBench (231 public items)</summary>
@@ -53,7 +53,7 @@ Long documents with typed questions; every request was answered.
 <details>
 <summary>Game arena against Jev</summary>
 
-Eight OpenSpiel games, 32 games each (16 openings × both colours): **122 wins, 47 draws, 87 losses (56.8%)**.
+Eight OpenSpiel games, 32 matches each (16 openings × both colours): **122 wins, 47 draws, 87 losses (56.8%)**.
 
 ![Drex v1.5 vs Jev game arena](assets/game_arena.png)
 
@@ -67,6 +67,8 @@ Needs a CUDA GPU; memory use grows with document length. The server answers `POS
 hf download nace-ai/drex-v1.5 --local-dir weights/drex-v1.5
 python serve.py --model weights/drex-v1.5 --port 8000
 ```
+
+To accept requests longer than 16,384 tokens, set `KEV_CONTEXT` (up to 131,072); see [Context length](../../docs/context-length.md).
 
 ## llama.cpp
 
@@ -93,7 +95,7 @@ The server answers `POST /v1/systemone` with the same request and response as th
 <details>
 <summary>Tested hardware</summary>
 
-AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2), against the Python server, every answer is the same in bf16 and Q8_0.
+AWS g5.2xlarge (NVIDIA A10G 24 GB, 8 vCPU AMD EPYC 7R32, 32 GiB RAM, Ubuntu 24.04, CUDA 13.2): every answer matches the Python server's in bf16 and Q8_0.
 
 Apple M5 Pro (18-core CPU, 20-core GPU, 48 GB unified memory, macOS 26.5.2): the Q8_0 GGUF gives the same answers on Metal and on the CPU.
 
@@ -147,12 +149,12 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
   -H 'Content-Type: application/json' -d @-
 ```
 
-Ollama needs `"model"` in the request, which the `jq` filter adds. It starts `llama-server` with two slots, so the state is encoded once per request. The default is 16,384 tokens. For up to 131,072, set `PARAMETER num_ctx 131072`, import again, and start the daemon with `SYSTEMONE_CONTEXT=131072`.
+Ollama needs `"model"` in the request, which the `jq` filter adds. It starts `llama-server` with two slots, so the state is encoded once per request. The default is 16,384 tokens; for up to 131,072, set `PARAMETER num_ctx 131072`, import again, and start the daemon with `SYSTEMONE_CONTEXT=131072`.
 
 <details>
 <summary>Tested hardware</summary>
 
-Through Ollama on the g5.2xlarge above, every answer is the same as the Python server's.
+Through Ollama on the g5.2xlarge above, every answer matches the Python server's.
 
 </details>
 

@@ -4,12 +4,12 @@ A decision model built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-
 
 [Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Drex v1.5](../drex-v1.5)
 
-It runs with Python. Requests of up to 16,384 tokens are accepted by default and up to 131,072 at most ([Context length](../../docs/context-length.md)). The bf16 weights take about 70 GB.
+It runs with Python. The default limit is 16,384 tokens per request and it can be raised to 131,072 ([Context length](../../docs/context-length.md)). The bf16 weights take about 70 GB.
 
 <details>
 <summary>How it works</summary>
 
-The backbone is a mixture-of-experts `Qwen3_5MoeForConditionalGeneration` with 40 layers, 256 experts and 8 active per token: 35B parameters in total, about 3B active. Only its language model is used; the vision tower is dropped on load. Each question is scored in one forward pass over the state plus that question, and the pointer head in `head.pt` turns the result into probabilities. Nothing is generated, so the sampling values in `generation_config.json` do not apply.
+The backbone is a mixture-of-experts `Qwen3_5MoeForConditionalGeneration` with 40 layers, 256 experts and 8 active per token: 35B parameters in total, about 3B active per token. Only its language model is used; the vision tower is dropped on load. Each question is scored in one forward pass over the state plus that question, and the pointer head in `head.pt` turns the result into probabilities. Nothing is generated, so the sampling values in `generation_config.json` do not apply.
 
 </details>
 
@@ -33,7 +33,7 @@ Public index only: the 37 public benchmarks in five areas, without the private t
 
 | Model | Accuracy | Easy | Standard | Hard |
 |---|---|---|---|---|
-| Jev 1.13.0 | **86.6%** (200/231) | 100.0% | **98.6%** | 73.0% |
+| Jev 1.13.0 | **86.6%** (200/231) | 100.0% | **98.6%** | **73.0%** |
 | **Drex v2.0** | 85.7% (198/231) | 100.0% | 95.8% | **73.0%** |
 
 Choice = top option, yes/no = noul ≥ 0.5, ordinal = top level.
@@ -75,7 +75,7 @@ Held-out addresses. Score is AUC; caught @ 5% is recall at a 5% false-positive r
 <details>
 <summary>Game arena against Jev</summary>
 
-Eight games, 32 matches each (16 openings × both colours). Score = (wins + ½ draws) ÷ games.
+Eight OpenSpiel games, 32 matches each (16 openings × both colours). Score = (wins + ½ draws) ÷ matches.
 
 |  | W – D – L | Score |
 |---|---|---|
@@ -97,7 +97,7 @@ Eight games, 32 matches each (16 openings × both colours). Score = (wins + ½ d
 
 ## Python
 
-Needs a CUDA GPU with room for the 70 GB of bf16 weights; memory use grows with document length. The server answers `POST /v1/systemone`.
+The server answers `POST /v1/systemone`.
 
 ```bash
 hf download nace-ai/drex-v2.0 --local-dir weights/drex-v2.0
@@ -105,3 +105,7 @@ python serve.py --model weights/drex-v2.0 --port 8000
 ```
 
 To accept requests longer than 16,384 tokens, set `KEV_CONTEXT` (up to 131,072); see [Context length](../../docs/context-length.md).
+
+## License
+
+Nace.AI Open RAIL-M license, see [LICENSE](LICENSE).

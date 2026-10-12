@@ -6,7 +6,7 @@
 
 🎉 **Drex DLM is out!** A diffusion-language-model decision model with a Q8_0 GGUF for Apple silicon and CUDA. [Model page](models/drex-dlm) · [BF16](https://huggingface.co/nace-ai/drex-dlm) · [Q8_0](https://huggingface.co/nace-ai/drex-dlm-Q8_0)
 
-Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and named typed questions (yes/no, multiple choice or rating scale) and get a probability for every option back; nothing is generated. Every model serves the `POST /v1/systemone` API of the hosted [Drex API](https://drex.nace.ai/docs), so you can run it yourself.
+Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and named typed questions (yes/no, multiple choice or rating scale) and get a probability for every option back; nothing is generated. Every model serves the same `POST /v1/systemone` API as the hosted [Drex API](https://drex.nace.ai/docs) and runs locally.
 
 [Hosted API docs](https://drex.nace.ai/docs) · [Agent skill](https://github.com/nace-ai/drex-agent-skill)
 
@@ -16,7 +16,7 @@ Open decision models from [Nace.AI](https://www.nace.ai/). Pass a `state` and na
 |---|---|---|---|---|
 | [Drex v2.0](models/drex-v2.0) | [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) (35B mixture of experts, about 3B active) | [nace-ai/drex-v2.0](https://huggingface.co/nace-ai/drex-v2.0) | – | [Nace.AI Open RAIL-M](models/drex-v2.0/LICENSE) |
 | [Drex v1.5](models/drex-v1.5) | [MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (distilled Qwen 3.5 9B) | [nace-ai/drex-v1.5](https://huggingface.co/nace-ai/drex-v1.5) | `drex-v1.5` | [Nace.AI Open RAIL-M](models/drex-v1.5/LICENSE) |
-| [Drex DLM](models/drex-dlm) | Efficient-DLM-8B | [nace-ai/drex-dlm](https://huggingface.co/nace-ai/drex-dlm) | `edlm` (llama.cpp), `nace-edlm` (Ollama) | [CC BY-NC 4.0](models/drex-dlm/LICENSE.md) |
+| [Drex DLM](models/drex-dlm) | [Efficient-DLM-8B](https://huggingface.co/nvidia/Efficient-DLM-8B) | [nace-ai/drex-dlm](https://huggingface.co/nace-ai/drex-dlm) | `edlm` (llama.cpp), `nace-edlm` (Ollama) | [CC BY-NC 4.0](models/drex-dlm/LICENSE.md) |
 
 ## Runners
 
@@ -24,8 +24,8 @@ Every model runs with Python and answers the same `POST /v1/systemone` request. 
 
 | Runner | Hardware | Use it for |
 |---|---|---|
-| Python (`serve.py`) | NVIDIA GPU | The reference implementation, batched requests |
-| [llama.cpp](https://github.com/nace-ai/llama.cpp) fork | CUDA, Metal, CPU | A GGUF served by `llama-server`, including Q8_0 |
+| Python (`serve.py`) | NVIDIA GPU; Apple silicon for Drex DLM | The reference implementation, batched requests |
+| [llama.cpp](https://github.com/nace-ai/llama.cpp) fork | CUDA, Metal; CPU for Drex v1.5 | A GGUF served by `llama-server`, including Q8_0 |
 | [Ollama](https://github.com/nace-ai/ollama) fork | CUDA, Metal, CPU | `ollama create` and a local daemon |
 
 The commands below use Drex v1.5. Each model page has the exact steps, build presets and tested hardware.
@@ -49,7 +49,7 @@ curl http://127.0.0.1:8000/v1/systemone \
   -H 'Content-Type: application/json' -d @examples/request.json
 ```
 
-`GET /health` returns `{"status": "ok", "model": "drex-v1.5"}` once the weights are loaded. Replace `drex-v1.5` with any model above, for example `drex-v2.0`.
+`GET /health` returns `{"status": "ok", "model": "drex-v1.5"}` once the weights are loaded. Replace `drex-v1.5` with any model above, for example `drex-v2.0`. To accept requests longer than 16,384 tokens, set `KEV_CONTEXT` ([Context length](docs/context-length.md)).
 
 Checkpoint loading requires safetensors backbone weights and a `head.pt` containing
 only tensors and primitive metadata. Python files and custom-code mappings bundled
@@ -58,7 +58,7 @@ Checkpoints that require other custom Python implementations are unsupported.
 
 ## llama.cpp
 
-Build the fork, convert the weights to GGUF and serve them. Add `-DGGML_CUDA=ON` to the first `cmake` command on NVIDIA, and `-ngl 99` to `llama-server` to use the GPU.
+Drex v1.5 and Drex DLM run on the llama.cpp fork. Build it, convert the weights to GGUF and serve them. Add `-DGGML_CUDA=ON` to the first `cmake` command on NVIDIA, and `-ngl 99` to `llama-server` to use the GPU.
 
 ```bash
 git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/llama.cpp.git
@@ -71,11 +71,11 @@ llama.cpp/build/bin/llama-server -m weights/drex-v1.5/drex-v1.5.gguf \
   --embedding --pooling none -np 2 -c 32768 -b 16384 -ub 2048 --port 8000
 ```
 
-The server takes the same request as `serve.py`. `llama-quantize` makes a Q8_0 GGUF of about 9.5 GB.
+The server takes the same request as `serve.py`. `llama-quantize` makes a Q8_0 GGUF; see the [model page](models/drex-v1.5/README.md#llamacpp).
 
 ## Ollama
 
-The Nace fork of Ollama runs the model as a `decision` capability and starts `llama-server` itself. Build the fork against the llama.cpp checkout above. These are the macOS commands; the [model page](models/drex-v1.5/README.md#ollama) has the CPU and CUDA presets.
+The Nace fork of Ollama runs Drex v1.5 and Drex DLM as a `decision` capability and starts `llama-server` itself. Build the fork against the llama.cpp checkout above. These are the macOS commands; the [model page](models/drex-v1.5/README.md#ollama) has the CPU and CUDA presets.
 
 ```bash
 git clone --branch drex-v1.5 --single-branch https://github.com/nace-ai/ollama.git
@@ -114,7 +114,7 @@ jq '. + {model: "drex-v1.5"}' examples/request.json | curl http://127.0.0.1:1143
 
 ## License
 
-Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see each model's page ([Drex v2.0](https://huggingface.co/nace-ai/drex-v2.0), [Drex v1.5](https://huggingface.co/nace-ai/drex-v1.5)).
+Code: Apache-2.0, see [LICENSE](LICENSE). Model weights: see the License column in [Models](#models).
 
 The Python runtime includes code adapted from [Kev](https://github.com/jaredpalmer/kev)
 by Jared Palmer. See [NOTICE](NOTICE) and [upstream provenance](docs/upstream.md).

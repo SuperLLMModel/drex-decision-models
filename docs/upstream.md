@@ -24,7 +24,3 @@ The following files have been adapted by Nace.AI for Drex:
   used for the attribution review; it is not a claim that this was the original
   import revision. Differences from this reference may include later upstream
   changes as well as Drex changes.
-
-For future imports, record the full upstream commit SHA, the imported paths,
-and a summary of local modifications here. If the original revision is recovered,
-update the original-revision entry with the evidence identifying it.
