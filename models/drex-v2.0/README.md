@@ -4,7 +4,7 @@
 
 We introduce Drex v2.0 from [Nace.AI](https://www.nace.ai/), a decision model that answers typed questions about a given context. Pass the context as `state` ([request format](../../docs/request-format.md)) with one or more named questions, and get a probability for every option back in one forward pass. Nothing is generated. Drex v2.0 beats Jev head to head in the eight-game arena (60.9%) and on email classification (AUC 0.984 against 0.981), and it runs on your own hardware with Python, llama.cpp or Ollama. It is built on [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B), a mixture of experts with 35B parameters and about 3B active per token, with a [Kev](https://github.com/jaredpalmer/kev) pointer head, and is released under the Nace.AI Open RAIL-M license.
 
-[Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Drex v1.5](../drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
+[Weights](https://huggingface.co/nace-ai/drex-v2.0) · [Q8_0 GGUF](https://huggingface.co/nace-ai/drex-v2.0-Q8_0) · [Drex v1.5](../drex-v1.5) · [llama.cpp fork](https://github.com/nace-ai/llama.cpp) (branch `drex-v2.0`) · [Ollama fork](https://github.com/nace-ai/ollama) (branch `drex-v2.0`)
 
 It runs with Python, llama.cpp or Ollama. The default limit is 16,384 tokens per request and it can be raised to 131,072 ([Context length](../../docs/context-length.md)). The bf16 weights take about 70 GB and the Q8_0 GGUF about 37 GB.
 
@@ -124,7 +124,7 @@ llama.cpp/build/bin/llama-server -m weights/drex-v2.0/drex-v2.0-Q8_0.gguf \
   --embedding --pooling none -np 2 -c 32768 -b 16384 -ub 2048 -ngl 28 --port 8000
 ```
 
-The server answers `POST /v1/systemone` with the same request and response as the Python server. The Q8_0 GGUF is 36.9 GB, so on a 48 GB Mac `-ngl 28` offloads 28 layers to Metal and runs the rest on the CPU; `-ngl 0` runs entirely on the CPU. The conversion needs the bf16 weights, about 70 GB, on disk.
+The server answers `POST /v1/systemone` with the same request and response as the Python server. The Q8_0 GGUF is 36.9 GB, so on a 48 GB Mac `-ngl 28` offloads 28 layers to Metal and runs the rest on the CPU; `-ngl 0` runs entirely on the CPU. The conversion needs the bf16 weights, about 70 GB, on disk. To skip it, download the ready-made [Q8_0 GGUF](https://huggingface.co/nace-ai/drex-v2.0-Q8_0) instead (`hf download nace-ai/drex-v2.0-Q8_0 drex-v2.0-Q8_0.gguf --local-dir weights/drex-v2.0-Q8_0`) and pass its path to `llama-server`.
 
 `-np 2` encodes the state once and shares it across questions. `-c` is split across the two slots, so this command accepts requests up to 16,384 tokens. For up to 131,072 tokens, set `SYSTEMONE_CONTEXT=131072` and use `-c 262144` ([Context length](../../docs/context-length.md)).
 
